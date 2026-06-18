@@ -1,8 +1,6 @@
-
-
-
-
 import express from "express";
+import users from "../Data/user.js";
+
 const router = express.Router();
 
 // 6. Create a routes folder to keep seperste from app.js 
@@ -15,27 +13,47 @@ const router = express.Router();
 
 // Create users array
 
-const users = [];
 
 
 
 // POST /users make a new user /hopefully its used by form 
 router.post('/', (req, res) => {
-    const newUser = { id: users.length + 1, name: req.body.name };
+    const newUser = {
+        id: users.length + 1,
+        name: req.body.name
+    };
     users.push(newUser);
-    res.json(newUser);
+    res.status(201).json(newUser);
 });
 
 // GET /users 
-router.get('/', (req, res) => res.json(users)
-);
+// router.get('/', (req, res) => res.json(users));
+
+
+// GET /users?name=...
+
+router.get('/', (req, res) => {
+    const {
+        name
+    } = req.query;  // /users?name=billy
+
+
+    if (name) {
+            const filtered = users.filter(u =>
+                u.name.toLowerCase().includes(name.toLowerCase())
+            );
+                res.json(filtered);
+    }
+    res.json(users);
+
+});
 
 
 // 8. Route Parameters - 
-// GET /users/:id - fetch one user 
+// GET /:id - fetch one user 
 // map users/3 whose id=3 
 
-router.get('/users/:id', (req, res) => {
+router.get('/:id', (req, res) => {
 
     //convert to number and find match users
     // req.params.id can be used in logic (update,delete)
@@ -47,5 +65,7 @@ router.get('/users/:id', (req, res) => {
     // otherwise return user as JSON
     res.json(user);
 });
+
+
 
 export default router;

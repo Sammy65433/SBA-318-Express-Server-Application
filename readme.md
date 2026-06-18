@@ -64,7 +64,7 @@ The objectives listed here are not required. Ensure that your application meets 
 These bonus objectives cannot increase your overall score above 100%. Successful completion of these objectives can, however, make up for lost points above. Ensure your application works as outlined by the requirements above before attempting these objectives, time permitting.
 
 
-First Step Setup 
+-------------------------First Step Setup 
 
 npm init -y
 npm i express ejs
@@ -77,12 +77,13 @@ Not yet Added!!!Thinking About it
   "dev": "nodemon app.js"
 }
 
-2. Make basic Server app.js
+----------------------2. Make basic Server app.js
 
 MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
 
 
-// 3. Add Middleware for JSON form data and static files
+-------------------// 3. Add Middleware for JSON form data and static files
+
  Make public folder and put style.css 
 
  MDN forms overview: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
@@ -91,7 +92,7 @@ Express static files: https://expressjs.com/en/starter/static-files.html
 
 
 
-4. // 2 custom middleware functions
+------------------4. // 2 custom middleware functions
 // log http and url of every incoming request
 // I see the traffic, and helps with debugging
 
@@ -123,7 +124,7 @@ MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Fun
 Express middleware: https://expressjs.com/en/guide/using-middleware.html
 
 
-5. Template Engine - Setup EJS
+------------------5. Template Engine - Setup EJS
 
 app.set('view engine', 'ejs'); //app.js
 
@@ -133,7 +134,7 @@ MDN Express tutorial with views: https://developer.mozilla.org/en-US/docs/Learn/
 EJS docs: https://ejs.co/
 
 
-6. Make a form views/index.ejs
+----------------------6. Make a form views/index.ejs
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -168,7 +169,7 @@ MDN forms: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extens
 MDN GET vs POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 
 
-7. Add one Api route/ form can interact with user.js -
+---------7. Add one Api route/ form can interact with user.js -
 
 const users = [];
 
@@ -185,7 +186,10 @@ router.get('/', (req, res) => res.json(users));
 MDN POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 MDN JSON: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON
 
-8. Add route Parameters 
+
+
+
+-----------8. Add route Parameters 
 
 MDN params idea through URLs/query strings: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
 Express routing: https://expressjs.com/en/guide/routing.html
@@ -205,3 +209,63 @@ router.get('/users/:id', (req, res) => {
     // otherwise return user as JSON
     res.json(user);
 });
+
+
+
+
+********Create data/user.js to test get/id change the users id to just id. was getting an error and muted the const users 
+
+router.get('/:id', (req, res) => {
+
+    //convert to number and find match users
+    // req.params.id can be used in logic (update,delete)
+    const user = users.find(u => u.id === Number(req.params.id));
+
+    // if no 404 
+    if (!user) return res.status(404).send('User not found');
+
+    // otherwise return user as JSON
+    res.json(user);
+});
+
+Ran 4 test 
+GET http://localhost:3000/users/2 = returns {"id":2,"name":"Samuel"}
+
+GET http://localhost:3000/users/1 = returns {"id":1,"name":"Susy"}
+
+GET http://localhost:3000/users/3 = returns {"id":3,"name":"Billy"}
+
+GET http://localhost:3000/users/99 → 404 “User not found”
+
+
+
+----------9. Query parameters - Add parameters for filtering 
+
+http://localhost:3000/users
+
+# Filter by name 
+ http://localhost:3000/users?name=billy
+
+
+
+ // GET /users?name=...
+
+router.get('/', (req, res) => {
+    const {
+        name
+    } = req.query;  // /users?name=billy
+
+
+    if (name) {
+            const filtered = users.filter(u =>
+                u.name.toLowerCase().includes(name.toLowerCase())
+            );
+                res.json(filtered);
+    }
+    res.json(users);
+
+});
+
+MDN URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
+MDN query strings in URLs: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
+

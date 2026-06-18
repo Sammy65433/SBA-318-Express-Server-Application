@@ -30,6 +30,8 @@ app.use(express.static("public")); // serves images/CSS from public
 
 
 
+// Mount Router 
+app.use('/users', usersRouter); //all /users/user.js
 
 
 // 4
@@ -68,8 +70,6 @@ app.get('/', (req,res) => {
     res.render('index');
 })
 
-// Mount Router 
-app.use('/users', usersRouter); //all /users/user.js
 
 
 
