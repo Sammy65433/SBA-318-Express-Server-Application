@@ -2,6 +2,7 @@
 // Make Basic Server app.js
 // 1-2
 import express from "express";
+import usersRouter from './routes/user.js'
 
 const app = express();
 
@@ -21,6 +22,8 @@ app.use(express.urlencoded({ // lets you reaad from data in req.body
     extended: true
 }));
 app.use(express.static("public")); // serves images/CSS from public 
+
+
 
 
 
@@ -53,6 +56,12 @@ app.use(validateName);
 // 5. Template Engine
 
 app.set('view engine', 'ejs');
+
+// Root View
+app.get('/', (req,res) => {
+    res.render('index');
+})
+
 
 
 

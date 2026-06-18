@@ -119,3 +119,35 @@ app.use(validateName)
 
 MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
 Express middleware: https://expressjs.com/en/guide/using-middleware.html
+
+
+5.// 5. Template Engine - Setup EJS
+
+app.set('view engine', 'ejs');
+
+Make  views folder with index.ejs 
+
+MDN Express tutorial with views: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data
+EJS docs: https://ejs.co/
+
+
+6. Make a form views/index.ejs
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css" />
+    <title>SBA 318 Express Server App</title>
+</head>
+<body>
+    <h1>SBA 318 Express Server Application</h1>
+    <form action="/users" method="POST">
+        <input type="text" name="name" placeholder="Enter name" />
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
+
+7.create a routes folder to keep seperste from app.js 
+routes/users.js and link to app.js 
