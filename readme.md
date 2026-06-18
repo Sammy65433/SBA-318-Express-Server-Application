@@ -186,3 +186,22 @@ MDN POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 MDN JSON: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON
 
 8. Add route Parameters 
+
+MDN params idea through URLs/query strings: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
+Express routing: https://expressjs.com/en/guide/routing.html
+
+// GET /users/:id - fetch one user 
+// map users/3 whose id=3 
+
+router.get('/users/:id', (req, res) => {
+
+    //convert to number and find match users
+    // req.params.id can be used in logic (update,delete)
+    const user = users.find(u => u.id === Number(req.params.id));
+
+    // if no 404 
+    if (!user) return res.status(404).send('User not found');
+
+    // otherwise return user as JSON
+    res.json(user);
+});

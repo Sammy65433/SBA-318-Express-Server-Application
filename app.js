@@ -14,6 +14,11 @@ const PORT = 3000;
 //     res.send("Hello, Stranger!");
 // });
 
+// 5. Template Engine
+
+app.set('view engine', 'ejs');
+
+
 // 3. Add Middleware for JSON form data and static files
 
 app.use(express.json()); //register express built in json
@@ -55,9 +60,6 @@ const validateName = (req, res, next) => {
 app.use(logger);
 app.use(validateName);
 
-// 5. Template Engine
-
-app.set('view engine', 'ejs');
 
 // 6.Make a form views/index.ejs
 // 

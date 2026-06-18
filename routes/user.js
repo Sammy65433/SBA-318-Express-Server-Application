@@ -13,6 +13,7 @@ const router = express.Router();
 
 
 
+// Create users array
 
 const users = [];
 
@@ -32,10 +33,12 @@ router.get('/', (req, res) => res.json(users)
 
 // 8. Route Parameters - 
 // GET /users/:id - fetch one user 
+// map users/3 whose id=3 
 
 router.get('/users/:id', (req, res) => {
 
     //convert to number and find match users
+    // req.params.id can be used in logic (update,delete)
     const user = users.find(u => u.id === Number(req.params.id));
 
     // if no 404 
