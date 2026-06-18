@@ -97,14 +97,16 @@ Express static files: https://expressjs.com/en/starter/static-files.html
 
 // Log request then call next
 const logger = (req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
+    console.log(`${req.method} ${req.url}`); //"GET/users"
+    next(); //handle next route
 };
 
 // check for POST request to have a name or else 400
 
 // run next if pass call next or else 400
 const validateName = (req, res, next) => {
+
+    //only run on POST- ignore other HTTP 
     if (req.method === 'POST' && !req.body.name) {
         return res.status(400).send('Name is required');
     }
@@ -114,18 +116,18 @@ const validateName = (req, res, next) => {
 // Register middleware 
 // Oredered listed (logger 1st, then validation)
 app.use(logger);
-app.use(validateName)
+app.use(validateName);
 
 
 MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
 Express middleware: https://expressjs.com/en/guide/using-middleware.html
 
 
-5.// 5. Template Engine - Setup EJS
+5. Template Engine - Setup EJS
 
-app.set('view engine', 'ejs');
+app.set('view engine', 'ejs'); //app.js
 
-Make  views folder with index.ejs 
+Make  views folder with index.ejs - //HTML 
 
 MDN Express tutorial with views: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data
 EJS docs: https://ejs.co/
@@ -149,5 +151,38 @@ EJS docs: https://ejs.co/
 </body>
 </html>
 
-7.create a routes folder to keep seperste from app.js 
-routes/users.js and link to app.js 
+Create a routes folder to keep seperste from app.js 
+routes/users.js and link to app.js dont forget to export defualt  in user.js to see form and page 
+
+import express from "express";
+const router = express.Router();
+
+export default router; - //at the bottom
+
+// Root View in app.js
+app.get('/', (req,res) => {
+    res.render('index');
+})
+
+MDN forms: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
+MDN GET vs POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+
+
+7. Add one Api route/ form can interact with user.js -
+
+const users = [];
+
+// POST /users make a new user /hopefully its used by form 
+
+
+router.post('/', (req, res) => {
+    const newUser = { id: users.length + 1, name: req.body.name };
+    users.push(newUser);
+    res.json(newUser);
+});
+router.get('/', (req, res) => res.json(users));
+
+MDN POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+MDN JSON: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON
+
+8. Add route Parameters 

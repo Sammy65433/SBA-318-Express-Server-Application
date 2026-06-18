@@ -28,20 +28,22 @@ app.use(express.static("public")); // serves images/CSS from public
 
 
 // 4
-// 2 custom middleware functions
+// Two custom middleware functions
 // log http and url of every incoming request
 // I see the traffic, and helps with debugging
 
 // Log request then call next
 const logger = (req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
+    console.log(`${req.method} ${req.url}`); //"GET/users"
+    next(); //handle next route
 };
 
 // check for POST request to have a name or else 400
 
 // run next if pass call next or else 400
 const validateName = (req, res, next) => {
+
+    //only run on POST- ignore other HTTP 
     if (req.method === 'POST' && !req.body.name) {
         return res.status(400).send('Name is required');
     }
@@ -57,10 +59,15 @@ app.use(validateName);
 
 app.set('view engine', 'ejs');
 
+// 6.Make a form views/index.ejs
+// 
 // Root View
 app.get('/', (req,res) => {
     res.render('index');
 })
+
+// Mount Router 
+app.use('/users', usersRouter); //all /users/user.js
 
 
 
