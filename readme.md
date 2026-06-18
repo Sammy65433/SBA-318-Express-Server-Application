@@ -63,3 +63,59 @@ The objectives listed here are not required. Ensure that your application meets 
 
 These bonus objectives cannot increase your overall score above 100%. Successful completion of these objectives can, however, make up for lost points above. Ensure your application works as outlined by the requirements above before attempting these objectives, time permitting.
 
+
+First Step Setup 
+
+npm init -y
+npm i express ejs
+npm i -D nodemon 
+
+MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
+
+Not yet Added!!!Thinking About it
+"scripts": {
+  "dev": "nodemon app.js"
+}
+
+2. Make basic Server app.js
+
+MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
+
+
+// 3. Add Middleware for JSON form data and static files
+ Make public folder and put style.css 
+
+ MDN forms overview: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
+MDN HTTP messages: https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
+Express static files: https://expressjs.com/en/starter/static-files.html
+
+
+
+4. // 2 custom middleware functions
+// log http and url of every incoming request
+// I see the traffic, and helps with debugging
+
+// Log request then call next
+const logger = (req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+};
+
+// check for POST request to have a name or else 400
+
+// run next if pass call next or else 400
+const validateName = (req, res, next) => {
+    if (req.method === 'POST' && !req.body.name) {
+        return res.status(400).send('Name is required');
+    }
+    next(); //validite pass go to route handler 
+};
+
+// Register middleware 
+// Oredered listed (logger 1st, then validation)
+app.use(logger);
+app.use(validateName)
+
+
+MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
+Express middleware: https://expressjs.com/en/guide/using-middleware.html
