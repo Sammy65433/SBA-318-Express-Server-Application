@@ -269,3 +269,8 @@ router.get('/', (req, res) => {
 MDN URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
 MDN query strings in URLs: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
 
+
+10. 
+
+11. Testing if static public works in the css 
+Css public/style.css

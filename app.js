@@ -26,12 +26,10 @@ app.use(express.json()); //register express built in json
 app.use(express.urlencoded({ // lets you reaad from data in req.body
     extended: true
 }));
-app.use(express.static("public")); // serves images/CSS from public 
+app.use('/static',express.static("public")); // serves images/CSS from public 
 
 
 
-// Mount Router 
-app.use('/users', usersRouter); //all /users/user.js
 
 
 // 4
@@ -61,6 +59,12 @@ const validateName = (req, res, next) => {
 // Oredered listed (logger 1st, then validation)
 app.use(logger);
 app.use(validateName);
+
+
+// Routes
+
+// Mount Router 
+app.use('/users', usersRouter); //all /users/user.js
 
 
 // 6.Make a form views/index.ejs
