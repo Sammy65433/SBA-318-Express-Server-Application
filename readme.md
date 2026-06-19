@@ -195,23 +195,24 @@ Express middleware: https://expressjs.com/en/guide/using-middleware.html
 
 ****************************Handle Errors********************
 
-app.use((req, res) => {
-  res.status(404).json({ error: "Route not found" });
+// Error Handle
+app.use((req, res, next) => {
+    console.log('Recieved request', req.method, req.originalUrl);
+    next()
 });
+
+app.use((req, res) => {
+    res.status(404).json({
+        error: "Route not found"
+});});
 
 
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(err.status || 500).json({ error: err.message || "Server error" });
-});
-
-
-
-
-// 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        error: err.message || "Server error"
+    });
 });
 
 ------------------5. Template Engine - Setup EJS
@@ -225,25 +226,63 @@ EJS docs: https://ejs.co/
 
 
 ----------------------6. Make a form views/index.ejs
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" />
-    <title>SBA 318 Express Server App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>SBA 318 Express Server App</title>
 </head>
 <body>
-    <h1>SBA 318 Express Server Application</h1>
-    <form action="/users" method="POST">
-        <input type="text" name="name" placeholder="Enter name" />
-        <button type="submit">Submit</button>
-    </form>
+  <div class="container">
+    <h1>SamuelJ - SBA 318 Express Server Application</h1>
+    <p class="subtitle">Pokemon API with Trainers, Pokemon, and Types</p>
+
+    <div class="card">
+      <h2>Add a Trainer</h2>
+      <form action="/trainers" method="POST">
+        <input type="text" name="name" placeholder="Trainer name" required />
+        <input type="text" name="region" placeholder="Region" required />
+        <button type="submit">Add Trainer</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Add a Pokemon</h2>
+      <form action="/pokemon" method="POST">
+        <input type="text" name="name" placeholder="Pokemon name" required />
+        <input type="number" name="trainerId" placeholder="Trainer ID" required />
+        <input type="number" name="typeId" placeholder="Type ID" required />
+        <input type="number" name="level" placeholder="Level" required />
+        <button type="submit">Add Pokemon</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>View Data</h2>
+      <ul>
+        <li><a href="/trainers">View All Trainers</a></li>
+        <li><a href="/pokemon">View All Pokemon</a></li>
+        <li><a href="/types">View All Types</a></li>
+      </ul>
+    </div>
+  </div>
 </body>
 </html>
 
+
+
+
 Create a routes folder to keep seperste from app.js 
-routes/users.js and link to app.js dont forget to export defualt  in user.js to see form and page 
+routes/user.js and link to app.js dont forget to export defualt  in user.js to see form and page 
+routes/pokemon.js
+routes/trainers.js
+routes/type.js
+
+
 
 import express from "express";
 const router = express.Router();
@@ -255,13 +294,19 @@ app.get('/', (req,res) => {
     res.render('index');
 })
 
+
 MDN forms: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
 MDN GET vs POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
 
+// Mount them 
+app.use("/trainers", trainersRouter);
+app.use("/pokemon", pokemonRouter);
+app.use("/types", typesRouter);
+app.use('/users', usersRouter);
 
 ---------7. Add one Api route/ form can interact with user.js -
 
-const users = [];
+const users = []; //didnt need this anymore 
 
 // POST /users make a new user /hopefully its used by form 
 

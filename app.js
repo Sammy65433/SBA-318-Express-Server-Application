@@ -77,6 +77,8 @@ app.get('/', (req, res) => {
     res.render('index');
 })
 
+
+// Mount them 
 app.use("/trainers", trainersRouter);
 app.use("/pokemon", pokemonRouter);
 app.use("/types", typesRouter);

@@ -11,4 +11,5 @@ router.get("/", (req, res) => {
   res.json(types);
 });
 
+
 export default router;
