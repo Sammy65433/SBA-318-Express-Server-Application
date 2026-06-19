@@ -1,12 +1,15 @@
-
+// app.js
 // Make Basic Server app.js
 // 1-2
 import express from "express";
-import usersRouter from './routes/user.js'
-
+import usersRouter from './routes/user.js';
+import trainersRouter from "./routes/trainers.js";
+import pokemonRouter from "./routes/pokemon.js";
+import typesRouter from "./routes/types.js";
 const app = express();
 
 const PORT = 3000;
+
 
 
 // Test
@@ -26,9 +29,10 @@ app.use(express.json()); //register express built in json
 app.use(express.urlencoded({ // lets you reaad from data in req.body
     extended: true
 }));
-app.use('/static',express.static("public")); // serves images/CSS from public 
+app.use('/static', express.static("public")); // serves images/CSS from public 
 
-
+// Mount Router 
+// app.use('/users', usersRouter); //all /users/user.js
 
 
 
@@ -42,6 +46,11 @@ const logger = (req, res, next) => {
     console.log(`${req.method} ${req.url}`); //"GET/users"
     next(); //handle next route
 };
+
+
+
+
+
 
 // check for POST request to have a name or else 400
 
@@ -61,19 +70,40 @@ app.use(logger);
 app.use(validateName);
 
 
-// Routes
-
-// Mount Router 
-app.use('/users', usersRouter); //all /users/user.js
-
-
 // 6.Make a form views/index.ejs
 // 
 // Root View
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.render('index');
 })
 
+app.use("/trainers", trainersRouter);
+app.use("/pokemon", pokemonRouter);
+app.use("/types", typesRouter);
+app.use('/users', usersRouter);
+
+
+
+// Error Handle
+app.use((req, res, next) => {
+    console.log('Recieved request', req.method, req.originalUrl);
+    next()
+});
+
+app.use((req, res) => {
+    res.status(404).json({
+        error: "Route not found"
+    });
+});
+
+
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500).json({
+        error: err.message || "Server error"
+    });
+});
 
 
 

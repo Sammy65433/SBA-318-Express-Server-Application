@@ -66,21 +66,90 @@ These bonus objectives cannot increase your overall score above 100%. Successful
 
 -------------------------First Step Setup 
 
+
+This project is a small RESTful API built with Node.js, Express, and EJS.  
+I changed my project theme to Pokemon data and organized it into three data categories:
+
+- `trainers`
+- `pokemon`
+- `types`
+
+The app includes custom middleware, error handling, route parameters, query parameters, a rendered EJS view, a form, and static CSS served with Express.
+
+**Project Setup**
+
+```bash
+npm init -y
+npm i express ejs
+npm i -D nodemon
+
 npm init -y
 npm i express ejs
 npm i -D nodemon 
+
+created pokemon data(random) /pokemon.js -pokemondata id, name, trainerid, typeid, level
+
+/trainer.js - trainer data  id, name, region
+
+/types.js -type data id, name 
 
 MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
 
 Not yet Added!!!Thinking About it
 "scripts": {
-  "dev": "nodemon app.js"
-}
+  "dev": "nodemon app.js"}
+
+
+Tech Used
+
+Node.js
+Express
+EJS
+JavaScript
+CSS
+
+Main Features
+
+Create a basic Express server
+Use built-in middleware:
+express.json()
+express.urlencoded({ extended: true })
+express.static()
+
+Use two custom middleware functions
+Use error-handling middleware
+Create RESTful routes
+Use route parameters
+Use query parameters for filtering
+Render a view using EJS
+Serve static CSS from the public folder
+Include a form that interacts with the API
+
+
+Custom Middleware
+
+logger
+Logs the request method and URL for each incoming request
+Helps with debugging
+validateName
+Checks POST requests for a required name field
+Sends a 400 error if name is missing
 
 ----------------------2. Make basic Server app.js
 
 MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
+I used EJS as the template engine.
 
+In app.js:
+
+
+app.set('view engine', 'ejs');
+I created a views folder with index.ejs and rendered it from the root route:
+
+
+app.get('/', (req, res) => {
+  res.render('index');
+});
 
 -------------------// 3. Add Middleware for JSON form data and static files
 
@@ -123,6 +192,27 @@ app.use(validateName);
 MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
 Express middleware: https://expressjs.com/en/guide/using-middleware.html
 
+
+****************************Handle Errors********************
+
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ error: err.message || "Server error" });
+});
+
+
+
+
+// 
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 ------------------5. Template Engine - Setup EJS
 
@@ -270,7 +360,40 @@ MDN URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchP
 MDN query strings in URLs: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
 
 
-10. 
+10. add one update or delete 
+
+
+// PATCH /users/:id 
+router.patch("/:id", (req, res) => {
+    const user = users.find(u => u.id === Number(req.params.id));
+
+    // if no 404 
+    if (!user) return res.status(404).send('User not found');
+
+    if (req.body.name) user.name = req.body.name;
+    // otherwise return user as JSON
+    res.json(user);
+});
+
+
+
 
 11. Testing if static public works in the css 
 Css public/style.css
+
+Css is working add '/static' cause it wasnt working without it 
+app.use('/static',express.static("public"));
+
+MDN CSS basics: https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics
+
+
+
+12. Test everything in the browser and Postman
+Check:
+/ renders EJS page
+form submits to /users
+/users lists data
+/users/1 uses route param
+/users?name=a uses query param
+Docs:
+MDN HTTP overview: https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview

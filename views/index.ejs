@@ -1,17 +1,46 @@
-<!-- views/index.ejs-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" />
-    <title>SBA 318 Express Server App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/static/style.css" />
+  <title>SBA 318 Express Server App</title>
 </head>
 <body>
-    <h1> SamuelJ - SBA 318 Express Server Application</h1>
-    <form action="/users" method="POST">
-        <input type="text" name="name" placeholder="Enter name" />
-        <button type="submit">Submit</button>
-    </form>
+
+  <div class="container">
+    <h1>SamuelJ - SBA 318 Express Server Application</h1>
+    <p class="subtitle">Pokemon API with Trainers, Pokemon, and Types</p>
+
+    <div class="card">
+      <h2>Add a Trainer</h2>
+      <form action="/trainers" method="POST">
+        <input type="text" name="name" placeholder="Trainer name" required />
+        <input type="text" name="region" placeholder="Region" required />
+        <button type="submit">Add Trainer</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Add a Pokemon</h2>
+      <form action="/pokemon" method="POST">
+        <input type="text" name="name" placeholder="Pokemon name" required />
+        <input type="number" name="trainerId" placeholder="Trainer ID" required />
+        <input type="number" name="typeId" placeholder="Type ID" required />
+        <input type="number" name="level" placeholder="Level" required />
+        <button type="submit">Add Pokemon</button>
+      </form>
+    </div>
+
+    
+    <div class="card">
+      <h2>View Data</h2>
+      <ul>
+        <li><a href="/trainers">View All Trainers</a></li>
+        <li><a href="/pokemon">View All Pokemon</a></li>
+        <li><a href="/types">View All Types</a></li>
+      </ul>
+    </div>
+  </div>
 </body>
 </html>

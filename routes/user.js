@@ -1,5 +1,5 @@
 import express from "express";
-import users from "../Data/user.js";
+import users from "../data/trainers.js";
 
 const router = express.Router();
 
@@ -17,14 +17,14 @@ const router = express.Router();
 
 
 // POST /users make a new user /hopefully its used by form 
-router.post('/', (req, res) => {
-    const newUser = {
-        id: users.length + 1,
-        name: req.body.name
-    };
-    users.push(newUser);
-    res.status(201).json(newUser);
-});
+// router.post('/', (req, res) => {
+//     const newUser = {
+//         id: users.length + 1,
+//         name: req.body.name
+//     };
+//     users.push(newUser);
+//     res.status(201).json(newUser);
+// });
 
 // GET /users 
 // router.get('/', (req, res) => res.json(users));
@@ -32,21 +32,21 @@ router.post('/', (req, res) => {
 
 // GET /users?name=...
 
-router.get('/', (req, res) => {
-    const {
-        name
-    } = req.query;  // /users?name=billy
+// router.get('/', (req, res) => {
+//     const {
+//         name
+//     } = req.query;  // /users?name=billy
 
 
-    if (name) {
-            const filtered = users.filter(u =>
-                u.name.toLowerCase().includes(name.toLowerCase())
-            );
-                res.json(filtered);
-    }
-    res.json(users);
+//     if (name) {
+//             const filtered = users.filter(u =>
+//                 u.name.toLowerCase().includes(name.toLowerCase())
+//             );
+//             return res.json(filtered);
+//     }
+//     res.json(users);
 
-});
+// });
 
 
 // 8. Route Parameters - 
@@ -66,6 +66,29 @@ router.get('/:id', (req, res) => {
     res.json(user);
 });
 
+
+// PATCH /users/:id 
+router.patch("/:id", (req, res) => {
+    const user = users.find(u => u.id === Number(req.params.id));
+
+    // if no 404 
+    if (!user) return res.status(404).send('User not found');
+
+    if (req.body.name) user.name = req.body.name;
+    // otherwise return user as JSON
+    res.json(user);
+});
+//     const id = Number(req.params.id);
+//     const comment = comments.find(comment => comment.id === id);
+
+//     if (!comment) {return res.status(404).json({ error: "Comment not found"});
+
+//     }
+//     if (req.body.body != undefined) {
+//         comment.body = req.body.body;
+//     }
+//     res.json(comment);
+// })
 
 
 export default router;
