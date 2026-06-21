@@ -78,6 +78,7 @@ app.get('/', (req, res) => {
 })
 
 
+
 // Mount them 
 app.use("/trainers", trainersRouter);
 app.use("/pokemon", pokemonRouter);
@@ -86,7 +87,7 @@ app.use('/users', usersRouter);
 
 
 
-// Error Handle
+// Error Handling
 app.use((req, res, next) => {
     console.log('Recieved request', req.method, req.originalUrl);
     next()
