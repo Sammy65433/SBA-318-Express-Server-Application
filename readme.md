@@ -64,40 +64,63 @@ The objectives listed here are not required. Ensure that your application meets 
 These bonus objectives cannot increase your overall score above 100%. Successful completion of these objectives can, however, make up for lost points above. Ensure your application works as outlined by the requirements above before attempting these objectives, time permitting.
 
 
--------------------------First Step Setup 
+***********************First Step Setup
 
+This project is a small RESTful API built with Node.js, Express, and EJS.
 
-This project is a small RESTful API built with Node.js, Express, and EJS.  
-I changed my project theme to Pokemon data and organized it into three data categories:
+I changed the project theme to Pokemon data and organized it into three main categories:
 
 - `trainers`
 - `pokemon`
 - `types`
 
-The app includes custom middleware, error handling, route parameters, query parameters, a rendered EJS view, a form, and static CSS served with Express.
+The app includes:
 
-**Project Setup**
+- custom middleware
+- error handling
+- route parameters
+- query parameters
+- a rendered EJS view
+- a form
+- static CSS served with Express
+
+*****************************Project Setup
+
+Install dependencies:
 
 ```bash
 npm init -y
-npm i express ejs
-npm i -D nodemon
+npm install express ejs
+npm install -D nodemon
 
-npm init -y
-npm i express ejs
-npm i -D nodemon 
-
-created pokemon data(random) /pokemon.js -pokemondata id, name, trainerid, typeid, level
-
-/trainer.js - trainer data  id, name, region
-
-/types.js -type data id, name 
 
 MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
 
 Not yet Added!!!Thinking About it
 "scripts": {
   "dev": "nodemon app.js"}
+
+
+I created separate data files for each category:
+
+pokemon.js
+stores pokemon data:
+id
+name
+trainerId
+typeId
+level
+
+trainers.js
+stores trainer data:
+id
+name
+region
+
+types.js
+stores type data:
+id
+name
 
 
 Tech Used
@@ -115,7 +138,6 @@ Use built-in middleware:
 express.json()
 express.urlencoded({ extended: true })
 express.static()
-
 Use two custom middleware functions
 Use error-handling middleware
 Create RESTful routes
@@ -126,67 +148,75 @@ Serve static CSS from the public folder
 Include a form that interacts with the API
 
 
-Custom Middleware
+
+**************************Basic Server Setup
+
+In app.js, I created a basic Express server and listened on a port:
+
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+I also used EJS as the template engine:
+
+
+app.set("view engine", "ejs");
+Then I created a views folder with an index.ejs file and rendered it from the root route:
+
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+
+
+Middleware Setup
+
+I added middleware for:
+
+JSON request bodies
+form data
+static files
+Example:
+
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+I also created a public folder and placed style.css inside it.
+
+*************************Custom Middleware
 
 logger
-Logs the request method and URL for each incoming request
+
+Logs the request method and URL for every incoming request
 Helps with debugging
+
+const logger = (req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+};
 validateName
+
 Checks POST requests for a required name field
 Sends a 400 error if name is missing
 
-----------------------2. Make basic Server app.js
-
-MDN Express intro: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
-I used EJS as the template engine.
-
-In app.js:
-
-
-app.set('view engine', 'ejs');
-I created a views folder with index.ejs and rendered it from the root route:
-
-
-app.get('/', (req, res) => {
-  res.render('index');
-});
-
--------------------// 3. Add Middleware for JSON form data and static files
-
- Make public folder and put style.css 
-
- MDN forms overview: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
-MDN HTTP messages: https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
-Express static files: https://expressjs.com/en/starter/static-files.html
-
-
-
-------------------4. // 2 custom middleware functions
-// log http and url of every incoming request
-// I see the traffic, and helps with debugging
-
-// Log request then call next
-const logger = (req, res, next) => {
-    console.log(`${req.method} ${req.url}`); //"GET/users"
-    next(); //handle next route
-};
-
-// check for POST request to have a name or else 400
-
-// run next if pass call next or else 400
 const validateName = (req, res, next) => {
-
-    //only run on POST- ignore other HTTP 
-    if (req.method === 'POST' && !req.body.name) {
-        return res.status(400).send('Name is required');
-    }
-    next(); //validite pass go to route handler 
+  if (req.method === "POST" && !req.body.name) {
+    return res.status(400).send("Name is required");
+  }
+  next();
 };
+Middleware Registration
 
-// Register middleware 
-// Oredered listed (logger 1st, then validation)
+I registered the middleware in this order:
+
+
 app.use(logger);
 app.use(validateName);
+This means:
+
+logger runs first
+validateName runs after it
 
 
 MDN functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
@@ -194,84 +224,172 @@ Express middleware: https://expressjs.com/en/guide/using-middleware.html
 
 
 ****************************Handle Errors********************
+Error Handling
 
-// Error Handle
+I added middleware to handle missing routes and server errors.
+
+Request logging before route handling:
+
+
 app.use((req, res, next) => {
-    console.log('Recieved request', req.method, req.originalUrl);
-    next()
+  console.log("Received request", req.method, req.originalUrl);
+  next();
 });
+404 route handler:
+
 
 app.use((req, res) => {
-    res.status(404).json({
-        error: "Route not found"
-});});
-
+  res.status(404).json({
+    error: "Route not found"
+  });
+});
+General error-handling middleware:
 
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(err.status || 500).json({
-        error: err.message || "Server error"
-    });
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    error: err.message || "Server error"
+  });
 });
+Template Engine Setup
 
-------------------5. Template Engine - Setup EJS
+I used EJS for server-side rendering.
 
-app.set('view engine', 'ejs'); //app.js
+In app.js:
 
-Make  views folder with index.ejs - //HTML 
 
-MDN Express tutorial with views: https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data
-EJS docs: https://ejs.co/
+app.set("view engine", "ejs");
+Then I created a views folder with index.ejs.
 
+Root route:
+
+
+app.get("/", (req, res) => {
+  res.render("index");
+});
+Why I Used EJS
+
+EJS lets me render dynamic HTML from the server. It helps connect Express routes with a front-end page more easily.
+
+MDN REF
+MDN Express introduction:
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction
+MDN Forms overview:
+https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
+MDN HTTP messages:
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Messages
+Express static files:
+https://expressjs.com/en/starter/static-files.html
+Express middleware:
+https://expressjs.com/en/guide/using-middleware.html
+MDN JavaScript functions:
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Functions
+MDN Express tutorial with views:
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data
+EJS documentation:
+https://ejs.co/
 
 ----------------------6. Make a form views/index.ejs
 
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="/static/style.css" />
-  <title>SBA 318 Express Server App</title>
-</head>
-<body>
-  <div class="container">
-    <h1>SamuelJ - SBA 318 Express Server Application</h1>
-    <p class="subtitle">Pokemon API with Trainers, Pokemon, and Types</p>
+SBA 318 Express Server App
 
-    <div class="card">
-      <h2>Add a Trainer</h2>
-      <form action="/trainers" method="POST">
-        <input type="text" name="name" placeholder="Trainer name" required />
-        <input type="text" name="region" placeholder="Region" required />
-        <button type="submit">Add Trainer</button>
-      </form>
-    </div>
+This is a simple front-end homepage for an Express server project.
+It connects to a Pokemon API with routes for trainers, pokemon, and types.
 
-    <div class="card">
-      <h2>Add a Pokemon</h2>
-      <form action="/pokemon" method="POST">
-        <input type="text" name="name" placeholder="Pokemon name" required />
-        <input type="number" name="trainerId" placeholder="Trainer ID" required />
-        <input type="number" name="typeId" placeholder="Type ID" required />
-        <input type="number" name="level" placeholder="Level" required />
-        <button type="submit">Add Pokemon</button>
-      </form>
-    </div>
+Purpose
 
-    <div class="card">
-      <h2>View Data</h2>
-      <ul>
-        <li><a href="/trainers">View All Trainers</a></li>
-        <li><a href="/pokemon">View All Pokemon</a></li>
-        <li><a href="/types">View All Types</a></li>
-      </ul>
-    </div>
-  </div>
-</body>
-</html>
+This page gives users a basic interface to:
+
+- add a new trainer
+- add a new pokemon
+- view all trainers
+- view all pokemon
+- view all types
+
+Files used
+
+- `index.html`
+- `/static/style.css`
+
+What the page includes
+
+1. Title Section
+   - Displays the project name:
+     - `SamuelJ - SBA 318 Express Server Application`
+   - Includes a subtitle:
+     - `Pokemon API with Trainers, Pokemon, and Types`
+
+2. Add a Trainer Form
+   - Sends a `POST` request to `/trainers`
+   - Includes:
+     - `name`
+     - `region`
+
+3. Add a Pokemon Form
+   - Sends a `POST` request to `/pokemon`
+   - Includes:
+     - `name`
+     - `trainerId`
+     - `typeId`
+     - `level`
+
+4. View Data Links
+   - `GET /trainers`
+   - `GET /pokemon`
+   - `GET /types`
+
+How it works
+
+- The `<form>` element collects user input
+- The `action` attribute tells the form where to send the data
+- The `method="POST"` sends the form data to the Express server
+- The links use `GET` requests to display stored data
+
+Route connections
+
+Trainer form:
+- `POST /trainers`
+
+Pokemon form:
+- `POST /pokemon`
+
+View links:
+- `GET /trainers`
+- `GET /pokemon`
+- `GET /types`
+
+Example usage
+
+Add a trainer:
+- Enter trainer name
+- Enter region
+- Click `Add Trainer`
+
+Add a pokemon:
+- Enter pokemon name
+- Enter trainer ID
+- Enter type ID
+- Enter level
+- Click `Add Pokemon`
+
+View stored data:
+- Click one of the links in the `View Data` section
+
+Important note
+
+This HTML page depends on the Express backend being running.
+If the server is not running, the forms and links will not work.
+
+
+Styling
+
+The page links to this stylesheet:
+
+```html
+<link rel="stylesheet" href="/static/style.css" />
+
 
 
 
@@ -282,163 +400,244 @@ routes/pokemon.js
 routes/trainers.js
 routes/type.js
 
+***************************************Express Trainers Routes
+
+This file defines the `/trainers` API routes for an Express server using an in-memory `trainers` array.
+
+Files used:
+- `routes/trainers.js`
+- `data/trainers.js`
+
+What this route does
+
+1. `GET /trainers`
+   - Returns all trainers
+   - Example:
+     - `http://localhost:3000/trainers`
+
+2. `GET /trainers?region=...`
+   - Returns only trainers whose `region` matches the query
+   - Filtering is case-insensitive
+   - Example:
+     - `http://localhost:3000/trainers?region=kanto`
+
+3. `GET /trainers/:id`
+   - Returns one trainer by `id`
+   - Example:
+     - `http://localhost:3000/trainers/5`
+
+4. `POST /trainers`
+   - Creates a new trainer
+   - Requires:
+     - `name`
+     - `region`
+   - Example request body:
+   ```json
+   {
+     "name": "Ash",
+     "region": "Kanto"
+   }
 
 
-import express from "express";
-const router = express.Router();
+********************************Pokemon Routes
 
-export default router; - //at the bottom
+This file contains the Express routes for handling pokemon data in the API.
 
-// Root View in app.js
-app.get('/', (req,res) => {
-    res.render('index');
-})
+The pokemon routes allow the user to:
 
+- view all pokemon
+- filter pokemon by type, trainer, or name
+- view one pokemon by id
+- create a new pokemon
+- update an existing pokemon
 
-MDN forms: https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Forms/Your_first_form
-MDN GET vs POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+Routes Included
 
-// Mount them 
-app.use("/trainers", trainersRouter);
-app.use("/pokemon", pokemonRouter);
-app.use("/types", typesRouter);
-app.use('/users', usersRouter);
+1. `GET /pokemon`
+   - Returns all pokemon
+   - Can also filter using query parameters
 
----------7. Add one Api route/ form can interact with user.js -
+Examples:
+- `/pokemon`
+- `/pokemon?typeId=2`
+- `/pokemon?trainerId=1`
+- `/pokemon?name=char`
+- `/pokemon?typeId=2&trainerId=1`
 
-const users = []; //didnt need this anymore 
+2. `GET /pokemon/:id`
+   - Returns one pokemon by its id
 
-// POST /users make a new user /hopefully its used by form 
+Example:
+- `/pokemon/3`
 
+3. `POST /pokemon`
+   - Creates a new pokemon
+   - Required fields:
+     - `name`
+     - `trainerId`
+     - `typeId`
+   - Optional field:
+     - `level`
 
-router.post('/', (req, res) => {
-    const newUser = { id: users.length + 1, name: req.body.name };
-    users.push(newUser);
-    res.json(newUser);
-});
-router.get('/', (req, res) => res.json(users));
+Example body:
+```json
+{
+  "name": "Pikachu",
+  "trainerId": 1,
+  "typeId": 4,
+  "level": 12
+}
 
-MDN POST: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
-MDN JSON: https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Scripting/JSON
-
-
-
-
------------8. Add route Parameters 
-
-MDN params idea through URLs/query strings: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
-Express routing: https://expressjs.com/en/guide/routing.html
-
-// GET /users/:id - fetch one user 
-// map users/3 whose id=3 
-
-router.get('/users/:id', (req, res) => {
-
-    //convert to number and find match users
-    // req.params.id can be used in logic (update,delete)
-    const user = users.find(u => u.id === Number(req.params.id));
-
-    // if no 404 
-    if (!user) return res.status(404).send('User not found');
-
-    // otherwise return user as JSON
-    res.json(user);
-});
+PATCH /pokemon/:id
+Updates an existing pokemon
+Only updates the fields included in the request body
+Example body:
 
 
+{
+  "level": 25
+}
 
+use route parameters with req.params
+use query parameters with req.query
+use request body data with req.body
+validate user input
+return proper HTTP status codes
+create and update in-memory data
 
-********Create data/user.js to test get/id change the users id to just id. was getting an error and muted the const users 
+Array.filter() is used to narrow down pokemon results
+Array.find() is used to locate one pokemon by id
+Array.push() is used to add a new pokemon
+Number() is used to convert strings from requests into numbers
+res.json() sends data back as JSON
 
-router.get('/:id', (req, res) => {
+Status Codes Used
 
-    //convert to number and find match users
-    // req.params.id can be used in logic (update,delete)
-    const user = users.find(u => u.id === Number(req.params.id));
-
-    // if no 404 
-    if (!user) return res.status(404).send('User not found');
-
-    // otherwise return user as JSON
-    res.json(user);
-});
-
-Ran 4 test 
-GET http://localhost:3000/users/2 = returns {"id":2,"name":"Samuel"}
-
-GET http://localhost:3000/users/1 = returns {"id":1,"name":"Susy"}
-
-GET http://localhost:3000/users/3 = returns {"id":3,"name":"Billy"}
-
-GET http://localhost:3000/users/99 → 404 “User not found”
-
-
-
-----------9. Query parameters - Add parameters for filtering 
-
-http://localhost:3000/users
-
-# Filter by name 
- http://localhost:3000/users?name=billy
-
-
-
- // GET /users?name=...
-
-router.get('/', (req, res) => {
-    const {
-        name
-    } = req.query;  // /users?name=billy
-
-
-    if (name) {
-            const filtered = users.filter(u =>
-                u.name.toLowerCase().includes(name.toLowerCase())
-            );
-                res.json(filtered);
-    }
-    res.json(users);
-
-});
-
-MDN URLSearchParams: https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams
-MDN query strings in URLs: https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL
-
-
-10. add one update or delete 
-
-
-// PATCH /users/:id 
-router.patch("/:id", (req, res) => {
-    const user = users.find(u => u.id === Number(req.params.id));
-
-    // if no 404 
-    if (!user) return res.status(404).send('User not found');
-
-    if (req.body.name) user.name = req.body.name;
-    // otherwise return user as JSON
-    res.json(user);
-});
+200 OK for successful GET and PATCH requests
+201 Created for successful POST requests
+400 Bad Request when required fields are missing
+404 Not Found when a pokemon id does not exist
 
 
 
 
-11. Testing if static public works in the css 
-Css public/style.css
 
-Css is working add '/static' cause it wasnt working without it 
-app.use('/static',express.static("public"));
+******************************Types Routes
 
-MDN CSS basics: https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics
+This file contains the Express routes for handling pokemon type data.
+
+The types routes allow the user to:
+
+- view all pokemon types
+- view one type by id
+- view all pokemon that belong to a specific type
+
+Routes Included
+
+1. `GET /types`
+   - Returns all pokemon types
+
+Example:
+- `/types`
+
+2. `GET /types/:id`
+   - Returns one type by its id
+
+Example:
+- `/types/1`
+
+3. `GET /types/:id/pokemon`
+   - Returns all pokemon that belong to a specific type
+
+Example:
+- `/types/1/pokemon`
+
+Why This Route File Exists
+
+This route file was created to organize and expose the `types` data in the API.
+
+It demonstrates how to:
+
+- create RESTful routes with Express
+- use route parameters with `req.params`
+- search data with `Array.find()`
+- filter related data with `Array.filter()`
+- connect one resource to another resource
+
+How It Works
+
+- `res.json(types)` sends the full types array
+- `Array.find()` searches for one type by id
+- `Array.filter()` returns all pokemon whose `typeId` matches the type id from the route
+- `Number(req.params.id)` converts the route parameter from a string into a number
+
+Status Codes Used
+
+- `200 OK` for successful requests
+- `404 Not Found` if a type id does not exist
 
 
 
-12. Test everything in the browser and Postman
-Check:
-/ renders EJS page
-form submits to /users
-/users lists data
-/users/1 uses route param
-/users?name=a uses query param
-Docs:
-MDN HTTP overview: https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
+Example Tests
+
+Get all types:
+- `GET http://localhost:3000/types`
+
+Get one type:
+- `GET http://localhost:3000/types/2`
+
+Get all pokemon for one type:
+- `GET http://localhost:3000/types/2/pokemon`
+
+Why `/types/:id/pokemon` Matters
+
+This route shows the relationship between `types` and `pokemon`.
+
+For example:
+- if a type has `id = 2`
+- and several pokemon have `typeId = 2`
+- this route returns only those pokemon
+
+This is useful because it shows how related data can be grouped and accessed through the API.
+
+
+Why i am are doing this:
+
+You are creating routes for the types resource in your RESTful API.
+This lets users view all types, view one type, and view all pokemon connected to one type.
+You are practicing how different pieces of data relate to each other.
+You are learning route parameters like req.params.id.
+You are showing that one resource can connect to another resource, like types connecting to pokemon.
+
+
+
+
+
+Requirements
+
+Create a Node/Express server	
+**** Implemented (app.js, app.listen)
+
+Build a RESTful API	
+******* Routes for /trainers, /pokemon, /types (GET, POST, PATCH, query/params)
+
+Create Express middleware	
+****** logger and validateName (custom)
+
+Use built‑in middleware	
+******* express.json(), express.urlencoded(), express.static()
+
+Use a template engine (EJS)	
+******* app.set("view engine","ejs"), views/index.ejs rendered
+
+Interact with self‑made API via HTML forms	
+******* Forms in index.ejs POST to /trainers and /pokemon
+
+Three distinct data collections	
+******* trainers, pokemon, types (in‑memory data files)
+
+No external API keys required	
+******* Confirmed in README and meeting notes
+
+Git repo with frequent commits	
+*********11commits
